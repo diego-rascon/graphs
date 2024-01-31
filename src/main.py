@@ -21,6 +21,7 @@ for row, line in enumerate(lines):
         graph.add_node(destination_node)
 
         graph.add_arc(origin_node, destination_node, arc_cost)
+        # hehehe
 
 graph.depth_first_search()
 
@@ -31,4 +32,4 @@ print('Grafo Transpuesto\n')
 print(graph.get_transposed())
 
 print('Grafo Ordenado por Tiempo de Finalización\n')
-graph.get_nodes_by_finalization()
+print(graph.desc_nodes_by_finalization())
