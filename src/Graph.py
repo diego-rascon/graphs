@@ -107,13 +107,35 @@ class Graph:
 
         return transposed_graph
 
-    def get_nodes_by_finalization(self):
-        nodes_finalization = {}
+    # return list of nodes
 
-        for node in self.nodes.values():
-            nodes_finalization[node.name] = node.finalization
+    def desc_nodes_by_finalization(self):
+        nodes_list = []
+        desc_nodes = sorted(self.nodes.values(), key=lambda node:node.finalization, reverse=True)
 
-        sorted_nodes = dict(sorted(nodes_finalization.items(), key=lambda item: item[1], reverse=True))
+        for node in desc_nodes:
+            nodes_list.append(node.name)
 
-        for name, distance in sorted_nodes.items():
-            print(f'Node {name}: {distance}')
+        return nodes_list
+
+    def strongly_connected_componentes(self):
+        self.depth_first_search()
+        transposed_graph = self.get_transposed()
+        sorted_nodes = self.desc_nodes_by_finalization()
+
+        for node in transposed_graph.nodes.values():
+            node.color = Color.WHITE
+            node.parent = None
+
+        time = 0
+        forest = []
+
+        for sorted_node in sorted_nodes:
+            node = transposed_graph.get_node(sorted_node)
+
+            if node.color == Color.WHITE:
+                forest = []
+                time = transposed_graph.strongly_connected_componentes_visit(node, time, tree)
+                forest.append(forest)
+
+        return forest
