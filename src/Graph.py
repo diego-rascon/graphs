@@ -134,8 +134,25 @@ class Graph:
             node = transposed_graph.get_node(sorted_node)
 
             if node.color == Color.WHITE:
-                forest = []
+                tree = []
                 time = transposed_graph.strongly_connected_componentes_visit(node, time, tree)
                 forest.append(forest)
 
         return forest
+
+    def strongly_connected_componentes_visit(self, node, time, tree):
+        tree.append(node)
+        node.color = Color.GRAY
+        time += 1
+        node.distance = time
+
+        for adjacent in node.adjacent:
+            if adjacent.color == Color.WHITE:
+                adjacent.parent = node
+                time = self.depth_first_search_visit(adjacent, time)
+
+        node.color = Color.BLACK
+        time += 1
+        node.finalization = time
+
+        return time
