@@ -109,9 +109,9 @@ class Graph:
 
     # return list of nodes
 
-    def desc_nodes_by_finalization(self):
+    def sort_nodes_by_finalization_desc(self):
         nodes_list = []
-        desc_nodes = sorted(self.nodes.values(), key=lambda node:node.finalization, reverse=True)
+        desc_nodes = sorted(self.nodes.values(), key=lambda key_node:key_node.finalization, reverse=True)
 
         for node in desc_nodes:
             nodes_list.append(node.name)
@@ -121,7 +121,7 @@ class Graph:
     def strongly_connected_componentes(self):
         self.depth_first_search()
         transposed_graph = self.get_transposed()
-        sorted_nodes = self.desc_nodes_by_finalization()
+        sorted_nodes = self.sort_nodes_by_finalization_desc()
 
         for node in transposed_graph.nodes.values():
             node.color = Color.WHITE
@@ -164,4 +164,20 @@ class Graph:
         for iteration, node in enumerate(self.nodes.values()):
             union_find[node.name] = iteration
 
-        return union_find
+        self.sort_nodes_by_cost_asc()
+
+        '''
+        A = new_graph
+        u = node
+        v = node
+        e = 
+        '''
+
+    def sort_nodes_by_cost_asc(self):
+        nodes_list = []
+        desc_nodes = sorted(self.nodes.values(), key=lambda key_node: key_node.cost, reverse=False)
+
+        for node in desc_nodes:
+            nodes_list.append(node.name)
+
+        return nodes_list

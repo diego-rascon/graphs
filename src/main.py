@@ -32,8 +32,10 @@ print('Grafo Transpuesto\n')
 print(graph.get_transposed())
 
 print('Grafo Ordenado por Tiempo de Finalización\n')
-print(graph.desc_nodes_by_finalization())
+print(graph.sort_nodes_by_finalization_desc())
 
 mst = graph.mst_kruskal()
 
 print(mst)
+
+
