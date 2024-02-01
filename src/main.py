@@ -1,6 +1,6 @@
 from Graph import Graph
 
-file = open('../graphs/graph5.txt')
+file = open('../graphs/kruskal1.txt')
 lines = file.readlines()
 
 graph = Graph('graph')
@@ -33,3 +33,7 @@ print(graph.get_transposed())
 
 print('Grafo Ordenado por Tiempo de Finalización\n')
 print(graph.desc_nodes_by_finalization())
+
+mst = graph.mst_kruskal()
+
+print(mst)

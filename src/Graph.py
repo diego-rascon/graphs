@@ -156,3 +156,12 @@ class Graph:
         node.finalization = time
 
         return time
+
+    def mst_kruskal(self):
+        new_graph = Graph(f'{self.name}_mst')
+        union_find = {}
+
+        for iteration, node in enumerate(self.nodes.values()):
+            union_find[node.name] = iteration
+
+        return union_find
