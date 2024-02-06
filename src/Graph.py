@@ -111,7 +111,7 @@ class Graph:
 
     def sort_nodes_by_finalization_desc(self):
         nodes_list = []
-        desc_nodes = sorted(self.nodes.values(), key=lambda key_node:key_node.finalization, reverse=True)
+        desc_nodes = sorted(self.nodes.values(), key=lambda key_node: key_node.finalization, reverse=True)
 
         for node in desc_nodes:
             nodes_list.append(node.name)
@@ -168,11 +168,12 @@ class Graph:
 
         '''
         A = new_graph
-        u = node
-        v = node
+        u = origin
+        v = destiny
         e = 
         '''
 
+    # No sé si esté bien este método
     def sort_nodes_by_cost_asc(self):
         nodes_list = []
         desc_nodes = sorted(self.nodes.values(), key=lambda key_node: key_node.cost, reverse=False)
