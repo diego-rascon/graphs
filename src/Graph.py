@@ -203,5 +203,9 @@ class Graph:
             kruskal_graph.add_node(origin)
             kruskal_graph.add_node(destiny)
             kruskal_graph.add_arc(origin, destiny, cost)
+            kruskal_graph.add_arc(destiny, origin, cost)
 
         return kruskal_graph
+
+    def prim(self):
+        pass
