@@ -1,8 +1,7 @@
 from enum import Enum
-
 from Arc import Arc
 from Node import Node
-
+import heapq
 
 class Color(Enum):
     GRAY = 1
@@ -158,54 +157,71 @@ class Graph:
 
         return time
 
-    def find(self, parent, i):
-        while parent[i] != i:
-            i = parent[i]
-        return i
+    def mst_kruskal(self):
+        new_graph = Graph(f'{self.name}_mst')
+        union_find = {}
 
-    def union(self, parent, root_range, x, y):
-        x_root = self.find(parent, x)
-        y_root = self.find(parent, y)
+        for iteration, node in enumerate(self.nodes.values()):
+            union_find[node.name] = iteration
 
-        if root_range[x_root] < root_range[y_root]:
-            parent[x_root] = y_root
-        elif root_range[x_root] > root_range[y_root]:
-            parent[y_root] = x_root
-        else:
-            parent[y_root] = x_root
-            root_range[x_root] += 1
+        self.sort_nodes_by_cost_asc()
 
-    def kruskal(self):
-        minimum_spanning_tree = []
-        self.arcs.sort(key=lambda sort_arc: sort_arc.cost)
-        parent = {}
-        rank = {}
+        '''
+        A = new_graph
+        u = origin
+        v = destiny
+        e = 
+        '''
 
-        for node in self.nodes:
-            parent[node] = node
-            rank[node] = 0
+    # No sé si esté bien este método
+    def sort_nodes_by_cost_asc(self):
+        nodes_list = []
+        desc_nodes = sorted(self.nodes.values(), key=lambda key_node: key_node.cost, reverse=False)
 
-        for arc in self.arcs:
-            root_origin = self.find(parent, arc.origin.name)
-            root_destination = self.find(parent, arc.destiny.name)
+        for node in desc_nodes:
+            nodes_list.append(node.name)
 
-            if root_origin != root_destination:
-                minimum_spanning_tree.append(arc)
-                self.union(parent, rank, root_origin, root_destination)
+        return nodes_list
 
-        kruskal_graph = Graph(f'{self.name}_kruskal')
-
-        for arc in minimum_spanning_tree:
-            origin = arc.origin.name
-            destiny = arc.destiny.name
-            cost = arc.cost
-
-            kruskal_graph.add_node(origin)
-            kruskal_graph.add_node(destiny)
-            kruskal_graph.add_arc(origin, destiny, cost)
-            kruskal_graph.add_arc(destiny, origin, cost)
-
-        return kruskal_graph
+    '''Esto es mi codigo, ya veremos si funciona xd'''
 
     def prim(self):
-        pass
+        # Creamos una lista para almacenar los nodos visitados y una lista para almacenar los nodos que faltan por visitar
+        visited = set()
+        remaining = set(self.nodes)
+
+        #Se agarra un nodo aleatorio como el profe le hizo, en su caso el empezo en s pero pues es la misma xd
+        start_node = next(iter(remaining))
+        visited.add(start_node)
+        remaining.remove(start_node)
+
+        # Creamos un montículo para almacenar las aristas disponibles
+        edges = [(weight, start_node, neighbor) for neighbor, weight in self[start_node]]
+        heapq.heapify(edges)
+
+        # Inicializamos el árbol de expansión mínima
+        mst = []
+
+        # Mientras queden nodos por visitar
+        while remaining:
+            # Tomamos la arista más corta disponible
+            #Como ven plebes, se importo esa madre que se llama heapq, sirve para tomar la arista mas corta sin necesidad de hacer un puto metodo
+            weight, source, destination = heapq.heappop(edges)
+
+            # Si el nodo de destino no ha sido visitado aún, lo agregamos al árbol de expansión mínima
+            if destination in remaining:
+                visited.add(destination)
+                remaining.remove(destination)
+                mst.append((source, destination, weight))
+
+                # Agregamos las aristas del nuevo nodo a las aristas disponibles
+                for neighbor, weight in self[destination]:
+                    if neighbor in remaining:
+                        heapq.heappush(edges, (weight, destination, neighbor))
+
+        return mst
+
+
+    #Pueden moverle con gusto plebes, yo consegui este algoritmo desde chatgpt pero le cambie unas cosas, la verdad siento
+    # el error que da es porque estoy llamando mal los atributos del grafo, espero lo sepan adaptar al nuestro, de igual
+    #forma les dejare el codigo que me dio chatgpt para que vean que es lo que me dio. Lo pondre en un txt para que lo puedan leer

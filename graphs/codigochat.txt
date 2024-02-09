@@ -1,0 +1,98 @@
+import heapq
+
+def prim(graph):
+    # Creamos un conjunto para almacenar los nodos visitados y un conjunto para almacenar los nodos que faltan por visitar
+    visited = set()
+    remaining = set(graph.keys())
+
+    # Elegimos un nodo aleatorio para empezar
+    start_node = next(iter(remaining))
+    visited.add(start_node)
+    remaining.remove(start_node)
+
+    # Creamos un montículo para almacenar las aristas disponibles
+    edges = [(weight, start_node, neighbor) for neighbor, weight in graph[start_node]]
+    heapq.heapify(edges)
+
+    # Inicializamos el árbol de expansión mínima
+    mst = []
+
+    # Mientras queden nodos por visitar
+    while remaining:
+        # Tomamos la arista más corta disponible
+        weight, source, destination = heapq.heappop(edges)
+
+        # Si el nodo de destino no ha sido visitado aún, lo agregamos al árbol de expansión mínima
+        if destination in remaining:
+            visited.add(destination)
+            remaining.remove(destination)
+            mst.append((source, destination, weight))
+
+            # Agregamos las aristas del nuevo nodo a las aristas disponibles
+            for neighbor, weight in graph[destination]:
+                if neighbor in remaining:
+                    heapq.heappush(edges, (weight, destination, neighbor))
+
+    return mst
+
+graph = {
+    's': [('t', 6), ('y', 7)],
+    't': [('x', 5), ('y', 8), ('z', -4)],
+    'x': [('t', -2)],
+    'y': [('x', -3), ('z', 9)],
+    'z': [('s', 2), ('x', 7)]
+}
+
+
+minimum_spanning_tree = prim(graph)
+print("Árbol de expansión mínima:")
+for edge in minimum_spanning_tree:
+    print(edge)
+
+
+Pondre tambien la explicacion de cada cosa que me dio
+
+
+¡Claro! Voy a explicar el código línea por línea:
+
+import heapq: Importa el módulo heapq, que proporciona funciones para trabajar con montículos (heaps), que se utilizan en este caso para mantener las aristas disponibles y poder acceder rápidamente a la arista más corta.
+
+def prim(graph):: Define una función llamada prim que toma como argumento un grafo en forma de diccionario.
+
+visited = set(): Crea un conjunto para almacenar los nodos visitados durante el proceso.
+
+remaining = set(graph.keys()): Crea un conjunto para almacenar los nodos que aún no han sido visitados.
+
+start_node = next(iter(remaining)): Elige un nodo aleatorio para comenzar el algoritmo.
+
+visited.add(start_node): Agrega el nodo inicial a los nodos visitados.
+
+remaining.remove(start_node): Remueve el nodo inicial de los nodos restantes por visitar.
+
+edges = [(weight, start_node, neighbor) for neighbor, weight in graph[start_node]]: Crea una lista de tuplas para representar las aristas disponibles desde el nodo inicial. Cada tupla contiene el peso de la arista, el nodo origen y el nodo destino.
+
+heapq.heapify(edges): Convierte la lista de aristas en un montículo (heap) para que sea más eficiente acceder a la arista más corta.
+
+mst = []: Inicializa una lista para almacenar el árbol de expansión mínima.
+
+while remaining:: Inicia un bucle que se ejecuta mientras queden nodos por visitar.
+
+weight, source, destination = heapq.heappop(edges): Extrae la arista más corta disponible del montículo.
+
+if destination in remaining:: Comprueba si el nodo de destino de la arista no ha sido visitado aún.
+
+visited.add(destination): Agrega el nodo de destino a los nodos visitados.
+
+remaining.remove(destination): Remueve el nodo de destino de los nodos restantes por visitar.
+
+mst.append((source, destination, weight)): Agrega la arista al árbol de expansión mínima.
+
+for neighbor, weight in graph[destination]:: Itera sobre los nodos vecinos del nodo de destino.
+
+if neighbor in remaining:: Comprueba si el nodo vecino no ha sido visitado aún.
+
+heapq.heappush(edges, (weight, destination, neighbor)): Agrega la arista al montículo de aristas disponibles.
+
+return mst: Devuelve el árbol de expansión mínima.
+
+¡Espero que esta explicación te ayude a comprender el código! Si tienes más preguntas, no dudes en hacerlas.
