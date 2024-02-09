@@ -1,6 +1,6 @@
 from Graph import Graph
 
-file = open('../graphs/kruskal1.txt')
+file = open('../graphs/kruskal/ejemplo1.txt')
 lines = file.readlines()
 
 graph = Graph('graph')
@@ -21,7 +21,6 @@ for row, line in enumerate(lines):
         graph.add_node(destination_node)
 
         graph.add_arc(origin_node, destination_node, arc_cost)
-        # hehehe
 
 graph.depth_first_search()
 
@@ -34,8 +33,7 @@ print(graph.get_transposed())
 print('Grafo Ordenado por Tiempo de Finalización\n')
 print(graph.sort_nodes_by_finalization_desc())
 
-mst = graph.mst_kruskal()
 
-print(mst)
-
-
+kruskal = graph.kruskal()
+print('\nMétodo de Kruskal\n')
+print(kruskal)

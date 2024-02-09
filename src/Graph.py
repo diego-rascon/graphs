@@ -1,4 +1,5 @@
 from enum import Enum
+
 from Arc import Arc
 from Node import Node
 
@@ -157,28 +158,50 @@ class Graph:
 
         return time
 
-    def mst_kruskal(self):
-        new_graph = Graph(f'{self.name}_mst')
-        union_find = {}
+    def find(self, parent, i):
+        while parent[i] != i:
+            i = parent[i]
+        return i
 
-        for iteration, node in enumerate(self.nodes.values()):
-            union_find[node.name] = iteration
+    def union(self, parent, root_range, x, y):
+        x_root = self.find(parent, x)
+        y_root = self.find(parent, y)
 
-        self.sort_nodes_by_cost_asc()
+        if root_range[x_root] < root_range[y_root]:
+            parent[x_root] = y_root
+        elif root_range[x_root] > root_range[y_root]:
+            parent[y_root] = x_root
+        else:
+            parent[y_root] = x_root
+            root_range[x_root] += 1
 
-        '''
-        A = new_graph
-        u = origin
-        v = destiny
-        e = 
-        '''
+    def kruskal(self):
+        minimum_spanning_tree = []
+        self.arcs.sort(key=lambda sort_arc: sort_arc.cost)
+        parent = {}
+        rank = {}
 
-    # No sé si esté bien este método
-    def sort_nodes_by_cost_asc(self):
-        nodes_list = []
-        desc_nodes = sorted(self.nodes.values(), key=lambda key_node: key_node.cost, reverse=False)
+        for node in self.nodes:
+            parent[node] = node
+            rank[node] = 0
 
-        for node in desc_nodes:
-            nodes_list.append(node.name)
+        for arc in self.arcs:
+            root_origin = self.find(parent, arc.origin.name)
+            root_destination = self.find(parent, arc.destiny.name)
 
-        return nodes_list
+            if root_origin != root_destination:
+                minimum_spanning_tree.append(arc)
+                self.union(parent, rank, root_origin, root_destination)
+
+        kruskal_graph = Graph(f'{self.name}_kruskal')
+
+        for arc in minimum_spanning_tree:
+            origin = arc.origin.name
+            destiny = arc.destiny.name
+            cost = arc.cost
+
+            kruskal_graph.add_node(origin)
+            kruskal_graph.add_node(destiny)
+            kruskal_graph.add_arc(origin, destiny, cost)
+
+        return kruskal_graph
