@@ -1,6 +1,6 @@
 from Graph import Graph
 
-file = open('../graphs/pim.txt')
+file = open('../graphs/prim/prim1.txt')
 lines = file.readlines()
 
 graph = Graph('graph')
@@ -21,7 +21,6 @@ for row, line in enumerate(lines):
         graph.add_node(destination_node)
 
         graph.add_arc(origin_node, destination_node, arc_cost)
-        # hehehe
 
 graph.depth_first_search()
 
@@ -34,9 +33,8 @@ print(graph.get_transposed())
 print('Grafo Ordenado por Tiempo de Finalización\n')
 print(graph.sort_nodes_by_finalization_desc())
 
-mst = graph.mst_kruskal()
+print('\nMétodo de Kruskal\n')
+print(graph.mst_kruskal())
 
-print('Grafo en metodo Pim\n')
-print(graph.prim())
-
-
+print('Método de Prim\n')
+print(graph.mst_prim('s'))

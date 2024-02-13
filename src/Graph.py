@@ -1,7 +1,8 @@
 from enum import Enum
+
 from Arc import Arc
 from Node import Node
-import heapq
+
 
 class Color(Enum):
     GRAY = 1
@@ -157,40 +158,96 @@ class Graph:
 
         return time
 
+    def find(self, parent, i):
+        while parent[i] != i:
+            i = parent[i]
+        return i
+
+    def union(self, parent, root_range, x, y):
+        x_root = self.find(parent, x)
+        y_root = self.find(parent, y)
+
+        if root_range[x_root] < root_range[y_root]:
+            parent[x_root] = y_root
+        elif root_range[x_root] > root_range[y_root]:
+            parent[y_root] = x_root
+        else:
+            parent[y_root] = x_root
+            root_range[x_root] += 1
+
     def mst_kruskal(self):
-        new_graph = Graph(f'{self.name}_mst')
-        union_find = {}
+        minimum_spanning_tree = []
+        self.arcs.sort(key=lambda sort_arc: sort_arc.cost)
+        parent = {}
+        rank = {}
 
-        for iteration, node in enumerate(self.nodes.values()):
-            union_find[node.name] = iteration
+        for node in self.nodes:
+            parent[node] = node
+            rank[node] = 0
 
-        self.sort_nodes_by_cost_asc()
+        for arc in self.arcs:
+            root_origin = self.find(parent, arc.origin.name)
+            root_destination = self.find(parent, arc.destiny.name)
 
-        '''
-        A = new_graph
-        u = origin
-        v = destiny
-        e = 
-        '''
+            if root_origin != root_destination:
+                minimum_spanning_tree.append(arc)
+                self.union(parent, rank, root_origin, root_destination)
 
-    # No sé si esté bien este método
-    def sort_nodes_by_cost_asc(self):
+        kruskal_graph = Graph(f'{self.name}_kruskal')
+
+        for arc in minimum_spanning_tree:
+            origin = arc.origin.name
+            destiny = arc.destiny.name
+            cost = arc.cost
+
+            kruskal_graph.add_node(origin)
+            kruskal_graph.add_node(destiny)
+            kruskal_graph.add_arc(origin, destiny, cost)
+            kruskal_graph.add_arc(destiny, origin, cost)
+
+        return kruskal_graph
+
+    def mst_prim(self, start_node):
+        prim_graph = Graph(f'{self.name}_prim')
         nodes_list = []
-        desc_nodes = sorted(self.nodes.values(), key=lambda key_node: key_node.cost, reverse=False)
 
-        for node in desc_nodes:
-            nodes_list.append(node.name)
+        for node in self.nodes.values():
+            node.distance = float('Inf')
+            node.parent = None
+            nodes_list.append(node)
 
-        return nodes_list
+        start_node = self.get_node(start_node)
+        start_node.distance = 0
 
-    '''Esto es mi codigo, ya veremos si funciona xd'''
+        while len(nodes_list) > 0:
+            node = min(nodes_list, key=lambda node: node.distance)
+            nodes_list.remove(node)
+            prim_graph.add_node(node.name)
+            prim_graph.get_node(node.name).distance = node.distance
+            prim_graph.get_node(node.name).parent = node.parent
 
-    def prim(self):
-        # Creamos una lista para almacenar los nodos visitados y una lista para almacenar los nodos que faltan por visitar
+            if node.parent is not None:
+                prim_graph.add_arc(node.parent.name, node.name, node.distance - node.parent.distance)
+                prim_graph.add_arc(node.name, node.parent.name, node.distance - node.parent.distance)
+
+            for adjacent_node in node.adjacent:
+                cost = self.get_arc(node.name, adjacent_node.name).cost
+                if cost == float('Inf'):
+                    continue
+                if adjacent_node in nodes_list and cost + node.distance < adjacent_node.distance:
+                    adjacent_node.distance = cost + node.distance
+                    adjacent_node.parent = node
+
+        return prim_graph
+
+    def old_mst_prim(self):
+
+        # Creamos una lista para almacenar los nodos visitados y una
+        # lista para almacenar los nodos que faltan por visitar
         visited = set()
         remaining = set(self.nodes)
 
-        #Se agarra un nodo aleatorio como el profe le hizo, en su caso el empezo en s pero pues es la misma xd
+        # Se agarra un nodo aleatorio como el profe le hizo, en su caso el empezo en s pero pues es la misma xd
         start_node = next(iter(remaining))
         visited.add(start_node)
         remaining.remove(start_node)
@@ -205,7 +262,8 @@ class Graph:
         # Mientras queden nodos por visitar
         while remaining:
             # Tomamos la arista más corta disponible
-            #Como ven plebes, se importo esa madre que se llama heapq, sirve para tomar la arista mas corta sin necesidad de hacer un puto metodo
+            # Como ven plebes, se importo esa madre que se llama heapq, sirve para tomar la arista mas corta sin
+            # necesidad de hacer un puto metodo
             weight, source, destination = heapq.heappop(edges)
 
             # Si el nodo de destino no ha sido visitado aún, lo agregamos al árbol de expansión mínima
@@ -221,7 +279,7 @@ class Graph:
 
         return mst
 
-
-    #Pueden moverle con gusto plebes, yo consegui este algoritmo desde chatgpt pero le cambie unas cosas, la verdad siento
-    # el error que da es porque estoy llamando mal los atributos del grafo, espero lo sepan adaptar al nuestro, de igual
-    #forma les dejare el codigo que me dio chatgpt para que vean que es lo que me dio. Lo pondre en un txt para que lo puedan leer
+        # Pueden moverle con gusto plebes, yo consegui este algoritmo desde chatgpt pero le cambie unas cosas,
+        # la verdad siento el error que da es porque estoy llamando mal los atributos del grafo, espero lo sepan adaptar
+        # al nuestro, de igual forma les dejare el codigo que me dio chatgpt para que vean que es lo que me dio. Lo
+        # pondre en un txt para que lo puedan leer
