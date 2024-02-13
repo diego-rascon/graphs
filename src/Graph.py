@@ -176,7 +176,7 @@ class Graph:
             parent[y_root] = x_root
             root_range[x_root] += 1
 
-    def kruskal(self):
+    def mst_kruskal(self):
         minimum_spanning_tree = []
         self.arcs.sort(key=lambda sort_arc: sort_arc.cost)
         parent = {}
@@ -232,7 +232,7 @@ class Graph:
                 prim_graph.add_arc(node.name, node.parent.name, node.distance - node.parent.distance)
 
             for adjacent_node in node.adjacent:
-                cost = self.get_arc(node, adjacent_node)
+                cost = self.get_arc(node.name, adjacent_node.name).cost
                 if cost == float('Inf'):
                     continue
                 if adjacent_node in nodes_list and cost + node.distance < adjacent_node.distance:

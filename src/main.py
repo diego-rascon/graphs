@@ -1,6 +1,6 @@
 from Graph import Graph
 
-file = open('../graphs/kruskal/ejemplo1.txt')
+file = open('../graphs/prim/prim1.txt')
 lines = file.readlines()
 
 graph = Graph('graph')
@@ -33,7 +33,8 @@ print(graph.get_transposed())
 print('Grafo Ordenado por Tiempo de Finalización\n')
 print(graph.sort_nodes_by_finalization_desc())
 
-
-kruskal = graph.kruskal()
 print('\nMétodo de Kruskal\n')
-print(kruskal)
+print(graph.mst_kruskal())
+
+print('Método de Prim\n')
+print(graph.mst_prim('s'))
