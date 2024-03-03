@@ -1,6 +1,6 @@
 from Graph import Graph
 
-file = open('../graphs/prim/prim1.txt')
+file = open('../graphs/boruvka/boruvka-1.txt')
 lines = file.readlines()
 
 graph = Graph('graph')
@@ -27,6 +27,10 @@ graph.depth_first_search()
 print('Grafo Original\n')
 print(graph)
 
+print('Método de Boruvka\n')
+print(graph.mst_boruvka())
+
+'''
 print('Grafo Transpuesto\n')
 print(graph.get_transposed())
 
@@ -38,3 +42,4 @@ print(graph.mst_kruskal())
 
 print('Método de Prim\n')
 print(graph.mst_prim('s'))
+'''

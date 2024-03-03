@@ -241,46 +241,27 @@ class Graph:
 
         return prim_graph
 
-    def old_mst_prim(self):
+    def mst_boruvka(self):
+        mst = Graph(f'{self.name}_boruvka')
+        parent = {node: node for node in self.nodes}
+        rank = {node: 0 for node in self.nodes}
 
-        # Creamos una lista para almacenar los nodos visitados y una
-        # lista para almacenar los nodos que faltan por visitar
-        visited = set()
-        remaining = set(self.nodes)
+        while len(mst.nodes) < len(self.nodes) - 1:
+            min_edges = []
+            for node in self.nodes:
+                min_edge = None
+                for adjacent in self.nodes[node].adjacent:
+                    edge = self.get_arc(node, adjacent.name)
+                    if min_edge is None or edge.cost < min_edge.cost:
+                        min_edge = edge
+                min_edges.append(min_edge)
 
-        # Se agarra un nodo aleatorio como el profe le hizo, en su caso el empezo en s pero pues es la misma xd
-        start_node = next(iter(remaining))
-        visited.add(start_node)
-        remaining.remove(start_node)
-
-        # Creamos un montículo para almacenar las aristas disponibles
-        edges = [(weight, start_node, neighbor) for neighbor, weight in self[start_node]]
-        heapq.heapify(edges)
-
-        # Inicializamos el árbol de expansión mínima
-        mst = []
-
-        # Mientras queden nodos por visitar
-        while remaining:
-            # Tomamos la arista más corta disponible
-            # Como ven plebes, se importo esa madre que se llama heapq, sirve para tomar la arista mas corta sin
-            # necesidad de hacer un puto metodo
-            weight, source, destination = heapq.heappop(edges)
-
-            # Si el nodo de destino no ha sido visitado aún, lo agregamos al árbol de expansión mínima
-            if destination in remaining:
-                visited.add(destination)
-                remaining.remove(destination)
-                mst.append((source, destination, weight))
-
-                # Agregamos las aristas del nuevo nodo a las aristas disponibles
-                for neighbor, weight in self[destination]:
-                    if neighbor in remaining:
-                        heapq.heappush(edges, (weight, destination, neighbor))
+            for edge in min_edges:
+                if self.find(parent, edge.origin.name) != self.find(parent, edge.destiny.name):
+                    mst.add_node(edge.origin.name)
+                    mst.add_node(edge.destiny.name)
+                    mst.add_arc(edge.origin.name, edge.destiny.name, edge.cost)
+                    mst.add_arc(edge.destiny.name, edge.origin.name, edge.cost)
+                    self.union(parent, rank, edge.origin.name, edge.destiny.name)
 
         return mst
-
-        # Pueden moverle con gusto plebes, yo consegui este algoritmo desde chatgpt pero le cambie unas cosas,
-        # la verdad siento el error que da es porque estoy llamando mal los atributos del grafo, espero lo sepan adaptar
-        # al nuestro, de igual forma les dejare el codigo que me dio chatgpt para que vean que es lo que me dio. Lo
-        # pondre en un txt para que lo puedan leer
