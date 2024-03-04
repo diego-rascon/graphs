@@ -27,19 +27,5 @@ graph.depth_first_search()
 print('Grafo Original\n')
 print(graph)
 
-print('Método de Boruvka\n')
+print('Método de Bellman-Ford\n')
 print(graph.mst_boruvka())
-
-'''
-print('Grafo Transpuesto\n')
-print(graph.get_transposed())
-
-print('Grafo Ordenado por Tiempo de Finalización\n')
-print(graph.sort_nodes_by_finalization_desc())
-
-print('\nMétodo de Kruskal\n')
-print(graph.mst_kruskal())
-
-print('Método de Prim\n')
-print(graph.mst_prim('s'))
-'''
