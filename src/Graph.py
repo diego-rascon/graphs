@@ -241,8 +241,36 @@ class Graph:
         return prim_graph
 
     def mst_bellman_ford(self, start_node):
-        for node in self.nodes:
+        for node in self.nodes.values():
             node.distance = float('inf')
             node.parent = None
 
-        self.get_node(start_node).distance = 0
+        start_node = self.get_node(start_node)
+        start_node.distance = 0
+
+        # Relax edges repeatedly
+        for _ in range(len(self.nodes) - 1):
+            for arc in self.arcs:
+                if arc.origin.distance + arc.cost < arc.destiny.distance:
+                    arc.destiny.distance = arc.origin.distance + arc.cost
+                    arc.destiny.parent = arc.origin
+
+        # Check for negative cycles
+        for arc in self.arcs:
+            if arc.origin.distance + arc.cost < arc.destiny.distance:
+                raise ValueError("Graph contains a negative cycle")
+
+        # Create and return the resulting graph
+        bellman_ford_graph = Graph(f'{self.name}_bellman_ford')
+        for node in self.nodes.values():
+            bellman_ford_graph.add_node(node.name)
+            bellman_ford_graph.get_node(node.name).distance = node.distance
+            bellman_ford_graph.get_node(node.name).parent = node.parent
+
+        for arc in self.arcs:
+            origin = arc.origin.name
+            destiny = arc.destiny.name
+            cost = arc.cost
+            bellman_ford_graph.add_arc(origin, destiny, cost)
+
+        return bellman_ford_graph
