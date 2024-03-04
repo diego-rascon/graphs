@@ -241,27 +241,6 @@ class Graph:
 
         return prim_graph
 
-    def mst_boruvka(self):
-        mst = Graph(f'{self.name}_boruvka')
-        parent = {node: node for node in self.nodes}
-        rank = {node: 0 for node in self.nodes}
+    def mst_bellman_ford(self):
 
-        while len(mst.nodes) < len(self.nodes) - 1:
-            min_edges = []
-            for node in self.nodes:
-                min_edge = None
-                for adjacent in self.nodes[node].adjacent:
-                    edge = self.get_arc(node, adjacent.name)
-                    if min_edge is None or edge.cost < min_edge.cost:
-                        min_edge = edge
-                min_edges.append(min_edge)
-
-            for edge in min_edges:
-                if self.find(parent, edge.origin.name) != self.find(parent, edge.destiny.name):
-                    mst.add_node(edge.origin.name)
-                    mst.add_node(edge.destiny.name)
-                    mst.add_arc(edge.origin.name, edge.destiny.name, edge.cost)
-                    mst.add_arc(edge.destiny.name, edge.origin.name, edge.cost)
-                    self.union(parent, rank, edge.origin.name, edge.destiny.name)
-
-        return mst
+        pass

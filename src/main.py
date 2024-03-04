@@ -28,4 +28,4 @@ print('Grafo Original\n')
 print(graph)
 
 print('Método de Bellman-Ford\n')
-print(graph.mst_boruvka())
+print(graph.mst_bellman_ford())
