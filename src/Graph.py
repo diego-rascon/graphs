@@ -248,20 +248,18 @@ class Graph:
         start_node = self.get_node(start_node)
         start_node.distance = 0
 
-        # Relax edges repeatedly
         for _ in range(len(self.nodes) - 1):
             for arc in self.arcs:
                 if arc.origin.distance + arc.cost < arc.destiny.distance:
                     arc.destiny.distance = arc.origin.distance + arc.cost
                     arc.destiny.parent = arc.origin
 
-        # Check for negative cycles
         for arc in self.arcs:
             if arc.origin.distance + arc.cost < arc.destiny.distance:
                 raise ValueError("Graph contains a negative cycle")
 
-        # Create and return the resulting graph
         bellman_ford_graph = Graph(f'{self.name}_bellman_ford')
+
         for node in self.nodes.values():
             bellman_ford_graph.add_node(node.name)
             bellman_ford_graph.get_node(node.name).distance = node.distance
