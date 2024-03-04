@@ -1,4 +1,5 @@
 from enum import Enum
+from heapq import heappop, heappush
 
 from Arc import Arc
 from Node import Node
@@ -241,52 +242,44 @@ class Graph:
         return prim_graph
 
     def mst_dijkstra(self, start_node):
-        graph = Graph(self.name + '_dijkstra')
-        q = []
-        arcs = {}
-
-        for u in self.nodes.values():
-            graph.add_node(u.name)
-            node = graph.get_node(u.name)
-            node.distance = float('Inf')
+        for node in self.nodes.values():
+            node.distance = float('inf')
             node.parent = None
-            q.append(node)
 
-        start_node = graph.get_node(start_node)
+        start_node = self.get_node(start_node)
         start_node.distance = 0
 
-        while q:
-            node_minimum_distance: Node = self.get_minimum_distance(q)
-            original_node: Node = self.get_node(node_minimum_distance.name)
+        visited = set()
+        unvisited = set(self.nodes.values())
 
-            for destiny in original_node.adjacent:
-                if graph.get_node(destiny.name) in q:
-                    if node_minimum_distance.distance + self.get_cost(node_minimum_distance.name,
-                                                                      destiny.name) < destiny.distance:
-                        arcs[destiny.nombre] = [node_minimum_distance.name,
-                                                self.get_cost(node_minimum_distance.name, destiny.name),
-                                                node_minimum_distance.distance]
-                        graph_destiny = graph.get_node(destiny.name)
-                        graph_destiny.distance = arcs[destiny.name][1] + arcs[destiny.name][2]
+        while unvisited:
+            # Choose the unvisited node with the smallest distance
+            current_node = min(unvisited, key=lambda node: node.distance)
 
-            q.remove(node_minimum_distance)
+            # Remove the current node from the unvisited set
+            unvisited.remove(current_node)
+            visited.add(current_node)
 
-        for destiny, values in arcs.items():
-            graph.add_arc(values[0], destiny, values[1])
+            # Update distances considering the current node
+            for neighbor in current_node.adjacent:
+                if neighbor in visited:
+                    continue
 
-        return graph
+                arc = self.get_arc(current_node.name, neighbor.name)
+                if arc is None:
+                    continue
 
-    def get_minimum_distance(self, q: []) -> Node:
-        minimum = float('Inf')
-        minimum_node = Node('temp')
+                new_distance = current_node.distance + arc.cost
+                if new_distance < neighbor.distance:
+                    neighbor.distance = new_distance
+                    neighbor.parent = current_node
 
-        for node in q:
-            if node.distance < minimum:
-                minimum = node.distance
-                minimum_node = node
+        # Construct the resulting graph with shortest paths
+        shortest_paths_graph = Graph(f'{self.name}_shortest_paths')
+        for node in self.nodes.values():
+            shortest_paths_graph.add_node(node.name)
+            if node.parent is not None:
+                shortest_paths_graph.add_arc(node.parent.name, node.name, node.distance - node.parent.distance)
+                shortest_paths_graph.add_arc(node.name, node.parent.name, node.distance - node.parent.distance)
 
-        return minimum_node
-
-    def get_cost(self, origin, destiny):
-        arco = self.get_arc(origin, destiny)
-        return arco.cost
+        return shortest_paths_graph
