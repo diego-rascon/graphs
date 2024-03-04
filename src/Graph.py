@@ -1,4 +1,3 @@
-import heapq
 from enum import Enum
 
 from Arc import Arc
@@ -22,8 +21,8 @@ class Graph:
         if node not in self.nodes:
             self.nodes[node] = Node(node)
 
-    def get_node(self, nodo):
-        return self.nodes.get(nodo, None)
+    def get_node(self, node: str) -> Node:
+        return self.nodes.get(node)
 
     def add_arc(self, origin, destiny, cost):
         if self.get_node(origin) is not None and self.get_node(destiny) is not None:
@@ -241,27 +240,53 @@ class Graph:
 
         return prim_graph
 
-    def mst_boruvka(self):
-        mst = Graph(f'{self.name}_boruvka')
-        parent = {node: node for node in self.nodes}
-        rank = {node: 0 for node in self.nodes}
+    def mst_dijkstra(self, start_node):
+        graph = Graph(self.name + '_dijkstra')
+        q = []
+        arcs = {}
 
-        while len(mst.nodes) < len(self.nodes) - 1:
-            min_edges = []
-            for node in self.nodes:
-                min_edge = None
-                for adjacent in self.nodes[node].adjacent:
-                    edge = self.get_arc(node, adjacent.name)
-                    if min_edge is None or edge.cost < min_edge.cost:
-                        min_edge = edge
-                min_edges.append(min_edge)
+        for u in self.nodes.values():
+            graph.add_node(u.name)
+            node = graph.get_node(u.name)
+            node.distance = float('Inf')
+            node.parent = None
+            q.append(node)
 
-            for edge in min_edges:
-                if self.find(parent, edge.origin.name) != self.find(parent, edge.destiny.name):
-                    mst.add_node(edge.origin.name)
-                    mst.add_node(edge.destiny.name)
-                    mst.add_arc(edge.origin.name, edge.destiny.name, edge.cost)
-                    mst.add_arc(edge.destiny.name, edge.origin.name, edge.cost)
-                    self.union(parent, rank, edge.origin.name, edge.destiny.name)
+        start_node = graph.get_node(start_node)
+        start_node.distance = 0
 
-        return mst
+        while q:
+            node_minimum_distance: Node = self.get_minimum_distance(q)
+            original_node: Node = self.get_node(node_minimum_distance.name)
+
+            for destiny in original_node.adjacent:
+                if graph.get_node(destiny.name) in q:
+                    if node_minimum_distance.distance + self.get_cost(node_minimum_distance.name,
+                                                                      destiny.name) < destiny.distance:
+                        arcs[destiny.nombre] = [node_minimum_distance.name,
+                                                self.get_cost(node_minimum_distance.name, destiny.name),
+                                                node_minimum_distance.distance]
+                        graph_destiny = graph.get_node(destiny.name)
+                        graph_destiny.distance = arcs[destiny.name][1] + arcs[destiny.name][2]
+
+            q.remove(node_minimum_distance)
+
+        for destiny, values in arcs.items():
+            graph.add_arc(values[0], destiny, values[1])
+
+        return graph
+
+    def get_minimum_distance(self, q: []) -> Node:
+        minimum = float('Inf')
+        minimum_node = Node('temp')
+
+        for node in q:
+            if node.distance < minimum:
+                minimum = node.distance
+                minimum_node = node
+
+        return minimum_node
+
+    def get_cost(self, origin, destiny):
+        arco = self.get_arc(origin, destiny)
+        return arco.cost
