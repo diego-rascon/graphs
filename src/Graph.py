@@ -1,4 +1,3 @@
-import heapq
 from enum import Enum
 
 from Arc import Arc
@@ -241,6 +240,9 @@ class Graph:
 
         return prim_graph
 
-    def mst_bellman_ford(self):
+    def mst_bellman_ford(self, start_node):
+        for node in self.nodes:
+            node.distance = float('inf')
+            node.parent = None
 
-        pass
+        self.get_node(start_node).distance = 0

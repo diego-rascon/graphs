@@ -1,6 +1,6 @@
 from Graph import Graph
 
-file = open('../graphs/boruvka/boruvka-1.txt')
+file = open('../graphs/bellman-ford/bellman-ford-1.txt')
 lines = file.readlines()
 
 graph = Graph('graph')
@@ -28,4 +28,4 @@ print('Grafo Original\n')
 print(graph)
 
 print('Método de Bellman-Ford\n')
-print(graph.mst_bellman_ford())
+print(graph.mst_bellman_ford('s'))
